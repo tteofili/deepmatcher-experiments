@@ -100,13 +100,13 @@ predict_fn = lambda tuples : wrap_dm(model, tuples)
 # generate data for training deepmatcher
 datadir = 'datasets/Structured/DBLP-ACM'
 trainLab, validationLab, testLab = dm.data.process(path=datadir, left_prefix='ltable_',right_prefix='rtable_',
-                                                   train='merged_train.csv',  validation='merged_valid.csv',
+                                                   train='merged_train.csv',  validation='merged_validation.csv',
                                                    test='merged_test.csv')
 
 # train deepmatcher
 model = dm.MatchingModel(attr_summarizer='hybrid')
-#model.load_state('da_dm.pth')
-model.run_train(trainLab, validationLab, best_save_path='da_dm.pth', epochs=15)
+model.load_state('da_dm.pth')
+#model.run_train(trainLab, validationLab, best_save_path='da_dm.pth', epochs=15)
 
 # evaluate deepmatcher on test data
 eval = model.run_eval(testLab)
@@ -122,7 +122,7 @@ explainer = anchor_text.AnchorText(nlp, class_names, mask_string='', use_unk_dis
 
 verbose = False
 e_values = {0: [''], 1: ['']}
-threshold = 101
+threshold = 51
 print(f'using {len(pairs_str_test)} test samples')
 for t_i in pairs_str_test:
     try:
@@ -138,7 +138,7 @@ for t_i in pairs_str_test:
             print('Prediction: %s' % pred)
 
             # explain test instance
-            exp = explainer.explain_instance(t_i, predict_fn, threshold=0.95, use_proba=True, beam_size=4)
+            exp = explainer.explain_instance(t_i, predict_fn, threshold=0.95, use_proba=True, beam_size=2)
 
             # print output explanation
             print('Anchor: %s' % (' AND '.join(exp.names())))
