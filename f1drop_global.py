@@ -5,9 +5,9 @@ import pandas as pd
 import deepmatcher as dm
 
 # generate data for training deepmatcher
-datadir = 'datasets/Structured/DBLP-ACM'
+datadir = 'datasets/Structured/Walmart-Amazon'
 
-columns_to_shuffle = ['title', 'authors', 'venue']
+columns_to_shuffle = []
 
 test_df = pd.read_csv(datadir + '/merged_test.csv', encoding='utf-8', sep=",")
 test_df2 = pd.read_csv(datadir + '/merged_test.csv', encoding='utf-8', sep=",")
@@ -20,12 +20,12 @@ for c in test_df2.columns:
 test_df2.to_csv(datadir+'/merged_test_shuffle.csv', index=False )
 
 trainLab, validationLab, testLab = dm.data.process(path=datadir, left_prefix='ltable_',right_prefix='rtable_',
-                                                   train='merged_train.csv',  validation='merged_validation.csv',
+                                                   train='merged_train.csv',  validation='merged_valid.csv',
                                                    test='merged_test_shuffle.csv')
 
 # train deepmatcher
 model = dm.MatchingModel(attr_summarizer='hybrid')
-model.load_state('da_dm.pth')
+model.load_state('wa_dm.pth')
 
 # evaluate deepmatcher on test data
 stats = model.run_eval(testLab)
